@@ -1,6 +1,6 @@
 <div class="sidebar">
     <div class="text-center mb-4">
-        <img src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : asset('profil/avatar.png') }}"
+        <img src="{{ Auth::check() ? asset(Auth::user()->avatar) : asset('profil/avatar.png') }}"
         class="rounded-circle"
         style="width: 60px; height: 60px; object-fit: cover; margin: auto;">
         <p class="fw-bold mt-2">

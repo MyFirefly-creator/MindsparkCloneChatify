@@ -34,16 +34,20 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($peminjaman as $p)
+            @forelse($peminjaman as $p)
                 <tr>
                     <td>{{ $p->id }}</td>
-                    <td>{{ $p->user->nama }}</td>
-                    <td>{{ $p->buku->NamaBuku }}</td>
-                    <td>{{ $p->TanggalPeminjaman }}</td>
-                    <td>{{ $p->TanggalPengembalian }}</td>
+                    <td>{{ isset($p->user) ? $p->user->nama : 'Data Tidak Ada' }}</td>
+                    <td>{{ isset($p->buku) ? $p->buku->NamaBuku : 'Data Tidak Ada' }}</td>
+                    <td>{{ \Carbon\Carbon::parse($p->TanggalPeminjaman)->format('d-m-Y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($p->TanggalPengembalian)->format('d-m-Y') }}</td>
                     <td>{{ $p->StatusPeminjaman }}</td>
                 </tr>
-            @endforeach
+            @empty
+                <tr>
+                    <td colspan="6" style="text-align: center;">Tidak ada data peminjaman</td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
 </body>

@@ -26,45 +26,49 @@ class PeminjamanController extends Controller
      * Show the form for creating a new resource.
      */
     public function create(Request $request)
-    {
-        $loggedInUser = Auth::user();
+{
+    $loggedInUser = Auth::user();
 
-        if ($loggedInUser->role == 'admin') {
-            return redirect()->route('home')->with('error', 'Access denied for admin users.');
-        }
-
-        $bukus = Buku::all();
-        $users = User::all();
-
-        return view('peminjaman.create', compact('bukus', 'users', 'loggedInUser'));
+    if ($loggedInUser->role == 'admin') {
+        return redirect()->route('home')->with('error', 'Access denied for admin users.');
     }
 
+    $bukus = Buku::all();
+    $users = User::all();
 
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'UserID' => 'required|exists:users,id',
-            'BukuID' => 'required|exists:bukus,id',
-            'TanggalPeminjaman' => 'required|date',
-            'TanggalPengembalian' => 'required|date|after:TanggalPeminjaman',
-        ]);
-
-        Peminjaman::create([
-            'UserID' => auth()->id(),
-            'BukuID' => $request->BukuID,
-            'TanggalPeminjaman' => now()->format('Y-m-d'),
-            'TanggalPengembalian' => now()->addDays(7)->format('Y-m-d'),
-            'StatusPeminjaman' => 'dipinjam',
-        ]);
-
-        return redirect()->route('peminjaman.index')->with('success', 'Peminjaman berhasil ditambahkan!');
+    if ($request->has('query')) {
+        $query = $request->get('query');
+        $books = Buku::where('NamaBuku', 'LIKE', '%' . $query . '%')->get();
+        return response()->json($books);
     }
 
+    return view('peminjaman.create', compact('bukus', 'users', 'loggedInUser'));
+}
 
+/**
+ * Store a newly created resource in storage.
+ */
+public function store(Request $request)
+{
+
+    $request->validate([
+        'UserID' => 'required|exists:users,id',
+        'BukuID' => 'required|exists:bukus,id',
+        'TanggalPeminjaman' => 'required|date',
+        'TanggalPengembalian' => 'required|date|after:TanggalPeminjaman',
+    ]);
+
+    // Create the new borrowing record
+    Peminjaman::create([
+        'UserID' => auth()->id(),
+        'BukuID' => $request->BukuID,
+        'TanggalPeminjaman' => now()->format('Y-m-d'),
+        'TanggalPengembalian' => now()->addDays(7)->format('Y-m-d'),
+        'StatusPeminjaman' => 'dipinjam',
+    ]);
+
+    return redirect()->route('peminjaman.index')->with('success', 'Peminjaman berhasil!');
+}
     /**
      * Display the specified resource.
      */
@@ -124,19 +128,27 @@ class PeminjamanController extends Controller
         return redirect()->route('peminjaman.index')->with('success', 'Peminjaman berhasil dihapus!');
     }
 
-    public function laporan()
+
+    public function laporan(Request $request)
     {
         $user = auth()->user();
 
-        $peminjaman = Peminjaman::with('buku', 'user')
-                                ->where('UserID', $user->id)
-                                ->get();
+        $query = Peminjaman::with('buku', 'user')->where('UserID', $user->id);
+
+        if ($request->has('start_date') && $request->has('end_date')) {
+            $query->whereBetween('TanggalPeminjaman', [$request->start_date, $request->end_date]);
+        }
+
+        $peminjaman = $query->get();
+
+        if ($peminjaman->isEmpty()) {
+            return back()->with('error', 'Tidak ada data peminjaman pada rentang tanggal yang dipilih.');
+        }
 
         $pdf = Pdf::loadView('peminjaman.laporan', compact('peminjaman'));
 
         return $pdf->download('laporan_peminjaman.pdf');
     }
-
 
     public function showUserHistory($userId)
     {
@@ -146,4 +158,14 @@ class PeminjamanController extends Controller
 
         return view('peminjaman.show', compact('peminjaman'));
     }
+
+    public function search(Request $request)
+    {
+        $query = $request->get('query');
+
+        $books = Buku::where('NamaBuku', 'LIKE', '%' . $query . '%')->get();
+
+        return response()->json($books);
+    }
+
 }

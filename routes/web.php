@@ -85,6 +85,7 @@ Route::middleware(['auth', 'admin','ban'])->group(function () {
 });
 
 Route::get('/search-users', [AdminController::class, 'searchUsers'])->name('search.users');
+Route::get('/peminjaman/search', [PeminjamanController::class, 'search'])->name('peminjaman.search');
 
 Route::middleware(['auth','ban'])->group(function () {
     Route::get('/settings', [UserController::class, 'setting'])->name('settings');
