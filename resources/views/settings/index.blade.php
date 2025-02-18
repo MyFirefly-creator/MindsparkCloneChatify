@@ -26,9 +26,9 @@
 <body class="bg-light d-flex align-items-center justify-content-center min-vh-100">
     <div class="container bg-white p-4 rounded shadow" style="max-width: 400px;">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <a href="#" class="text-dark"><i class="fas fa-arrow-left fa-2x"></i></a>
+            <a href="{{ route('dashboard.index') }}" class="text-dark"><i class="fas fa-arrow-left fa-2x"></i></a>
             <h2 class="m-0">Settings</h2>
-            <i class="fas fa-sync-alt fa-2x text-dark"></i>
+            <a href="{{ route('settings') }}" class="text-dark"><i class="fas fa-sync-alt fa-2x text-dark"></i></a>
         </div>
         <div class="text-center mb-4">
             <div class="position-relative d-inline-block">

@@ -32,7 +32,7 @@
 <body class="bg-light">
     <div class="sidebar d-flex flex-column">
         <div class="text-center mt-4">
-            <img src="{{ Auth::user()->foto_profil ? asset('profil/' . Auth::user()->avatar) : asset('profil/avatar.png') }}" class="rounded-circle" width="60" height="60" alt="Admin profile picture">
+            <img src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : asset('profil/avatar.png') }}" class="rounded-circle" width="60" height="60" alt="Admin profile picture">
             <h2 class="fs-5 mt-2">{{ $user->nama }}</h2>
         </div>
         <nav class="mt-4">
@@ -63,7 +63,7 @@
         <header class="d-flex justify-content-between align-items-center bg-white p-3 shadow">
             <h1 class="fs-4">Dashboard</h1>
             <div class="d-flex align-items-center">
-                <img src="{{ Auth::user()->foto_profil ? asset('profil/' . Auth::user()->foto_profil) : asset('profil/avatar.png') }}" class="rounded-circle me-3" width="40" height="40" alt="User profile picture">
+                <img src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : asset('profil/avatar.png') }}" class="rounded-circle me-3" width="40" height="40" alt="User profile picture">
                 <span class="me-3">{{ $user->username }}</span>
                 <i class="fas fa-bell fs-5"></i>
             </div>

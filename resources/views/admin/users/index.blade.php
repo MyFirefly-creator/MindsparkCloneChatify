@@ -165,6 +165,9 @@
                 <a href="{{ route('admin.users') }}" class="{{ request()->routeIs('admin.users') ? 'active' : '' }}">
                     <i class="fas fa-users me-2"></i> Manage Users
                 </a>
+                <a href="{{ route('admin.verifikasi.list') }}" class="{{ request()->routeIs('admin.verifikasi') ? 'active' : '' }}">
+                    <i class="fas fa-check-circle me-2"></i> Verifikasi Pengguna
+                </a>
             </nav>
         </div>
 

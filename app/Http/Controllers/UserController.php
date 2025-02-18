@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -124,6 +125,7 @@ class UserController extends Controller
         return view('sesi.edit', compact('User'));
     }
 
+
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
@@ -131,6 +133,7 @@ class UserController extends Controller
             'email' => 'required|unique:users,email,' . $id . '|string|max:255',
             'alamat' => 'required|string|max:255',
             'password' => 'nullable|min:6|confirmed',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:20480000',
         ]);
 
         $user = User::findOrFail($id);
@@ -141,6 +144,19 @@ class UserController extends Controller
 
         if ($request->filled('password')) {
             $user->password = Hash::make($validated['password']);
+        }
+
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar && $user->avatar !== 'avatar.jpg' && file_exists(public_path('profil/' . $user->avatar))) {
+                unlink(public_path('profil/' . $user->avatar));
+            }
+
+            $avatar = $request->file('avatar');
+            $avatarName = time() . '.' . $avatar->getClientOriginalExtension();
+
+            $avatar->move(public_path('profil'), $avatarName);
+
+            $user->avatar = 'profil/' . $avatarName;
         }
 
         $user->save();
