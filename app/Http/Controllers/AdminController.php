@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use App\Models\JenisPelanggaran;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
 {
@@ -24,17 +23,8 @@ class AdminController extends Controller
         return view('admin.index', compact('jumlahUser', 'jumlahBukuDipinjam', 'jumlahBukuBaru', 'user'));
     }
 
-    private function authorizeSuperAdmin()
-    {
-        if (Auth::user()->role !== 'superadmin') {
-            return redirect()->back()->with('error', 'Anda tidak memiliki izin untuk mengakses halaman ini.');
-        }
-    }
-
     public function user(Request $request)
     {
-        $this->authorizeSuperAdmin();
-
         $search = $request->get('search', '');
         $users = User::when($search, function ($query, $search) {
             return $query->where('nama', 'like', "%{$search}%")
@@ -49,8 +39,6 @@ class AdminController extends Controller
 
     public function storeWarning(Request $request)
     {
-        $this->authorizeSuperAdmin();
-
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'jenis_pelanggaran_id' => 'required|exists:jenis_pelanggarans,id',
@@ -69,14 +57,11 @@ class AdminController extends Controller
 
     public function createUser()
     {
-        $this->authorizeSuperAdmin();
         return view('admin.users.create');
     }
 
     public function storeUser(Request $request)
     {
-        $this->authorizeSuperAdmin();
-
         $validated = $request->validate([
             'nis' => 'required|unique:users,nis',
             'password' => 'required|min:6|confirmed',
@@ -95,16 +80,18 @@ class AdminController extends Controller
         return redirect()->route('admin.users')->with('success', 'User created successfully');
     }
 
+    public function showUser(User $user)
+    {
+        return view('admin.users.show',compact('user'));
+    }
+
     public function editUser(User $user)
     {
-        $this->authorizeSuperAdmin();
         return view('admin.users.edit', compact('user'));
     }
 
     public function updateUser(Request $request, User $user)
     {
-        $this->authorizeSuperAdmin();
-
         $validated = $request->validate([
             'nis' => 'required|unique:users,nis,' . $user->id,
             'password' => 'nullable|min:6|confirmed',
@@ -112,7 +99,7 @@ class AdminController extends Controller
             'alamat' => 'required|string',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'role' => 'required|string',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:102400'
         ]);
 
         if ($request->filled('password')) {
@@ -142,7 +129,6 @@ class AdminController extends Controller
 
     public function destroyUser(User $user)
     {
-        $this->authorizeSuperAdmin();
         $user->delete();
 
         return redirect()->route('admin.users')->with('success', 'User deleted successfully');
@@ -150,8 +136,6 @@ class AdminController extends Controller
 
     public function searchUsers(Request $request)
     {
-        $this->authorizeSuperAdmin();
-
         $query = $request->get('query');
         $users = User::where('nama', 'like', '%' . $query . '%')
             ->orWhere('email', 'like', '%' . $query . '%')
@@ -175,11 +159,13 @@ class AdminController extends Controller
 
         if ($status == 'diterima') {
             $user->status_verifikasi = 'diterima';
+            $user->save();
+            return redirect()->back()->with('success', 'Status verifikasi diperbarui.');
         } else {
             $user->status_verifikasi = 'ditolak';
+            $user->save();
+            $user->delete();
+            return redirect()->back()->with('success', 'User telah dihapus setelah ditolak.');
         }
-        $user->save();
-
-        return redirect()->back()->with('success', 'Status verifikasi diperbarui.');
     }
 }

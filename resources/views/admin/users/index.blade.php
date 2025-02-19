@@ -274,7 +274,7 @@
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this user?')">Delete</button>
                                                 </form>
-                                            </td>
+                                                <a href="{{ route('admin.users.show', $user->id) }}" class="btn btn-secondary btn-sm">Show</a>                                                                                            </td>
                                         </tr>
                                     @endif
                                 @endforeach

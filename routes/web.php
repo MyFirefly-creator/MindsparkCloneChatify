@@ -40,19 +40,24 @@ Route::middleware(['ban'])->group(function () {
 
 Route::get('/ban', [BanController::class, 'index'])->name('ban.index');
 
-Route::middleware(['auth', 'admin','ban'])->group(function () {
+Route::middleware(['auth', 'ban', 'superadmin'])->group(function () {
     Route::get('admin/users', [AdminController::class, 'user'])->name('admin.users');
     Route::get('admin/users/{user}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
     Route::put('admin/users/{user}', [AdminController::class, 'updateUser'])->name('admin.users.update');
     Route::delete('admin/users/{user}', [AdminController::class, 'destroyUser'])->name('admin.users.destroy');
     Route::get('/admin/users/create', [AdminController::class, 'createUser'])->name('admin.users.create');
     Route::post('/admin/users/store', [AdminController::class, 'storeUser'])->name('admin.users.store');
+    Route::get('admin/users/{user}', [AdminController::class, 'showUser'])->name('admin.users.show');
+    Route::post('/ban', [BanController::class, 'store'])->name('ban.store');
+    Route::post('/warnings/store', [AdminController::class, 'storeWarning'])->name('warnings.store');
+});
+
+Route::middleware(['auth', 'admin','ban'])->group(function () {
     Route::get('/admin/verifikasi', [AdminController::class, 'daftarVerifikasi'])->name('admin.verifikasi.list');
     Route::get('/admin/verifikasi/{id}/{status}', [AdminController::class, 'verifikasiUser'])->name('admin.verifikasi');
 
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
 
-    Route::post('/ban', [BanController::class, 'store'])->name('ban.store');
 
     Route::get('/buku', [BukuController::class, 'index'])->name('buku.index');
     Route::get('/buku/create', [BukuController::class, 'create'])->name('buku.create');
@@ -81,7 +86,6 @@ Route::middleware(['auth', 'admin','ban'])->group(function () {
     Route::delete('peminjaman/{peminjaman}', [PeminjamanController::class, 'destroy'])->name('peminjaman.destroy');
 
 
-    Route::post('/warnings/store', [AdminController::class, 'storeWarning'])->name('warnings.store');
 });
 
 Route::get('/search-users', [AdminController::class, 'searchUsers'])->name('search.users');
