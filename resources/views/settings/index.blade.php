@@ -44,7 +44,7 @@
             <a href="{{ route('sesi.edit', $User->id) }}" class="list-group-item list-group-item-action d-flex align-items-center">
                 <i class="fas fa-user-edit fa-lg me-3"></i> Edit Profile
             </a>
-            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
+            <a href="{{ route('Chat') }}" class="list-group-item list-group-item-action d-flex align-items-center">
                 <i class="fas fa-envelope fa-lg me-3"></i> Contact Us
             </a>
         </div>
