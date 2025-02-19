@@ -58,7 +58,7 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'nis' => 'nullable|numeric|unique:users',
-            'nama' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'email' => 'required|unique:users,email|string|max:255',
             'alamat' => 'required|string|max:255',
             'password' => 'required|min:6|confirmed',
@@ -72,7 +72,7 @@ class UserController extends Controller
         User::create([
             'nis' => $validated['nis'],
             'password' => Hash::make($validated['password']),
-            'nama' => $validated['nama'],
+            'name' => $validated['name'],
             'alamat' => $validated['alamat'],
             'email' => $validated['email'],
             'role' => 'user',
@@ -84,7 +84,6 @@ class UserController extends Controller
 
         return redirect()->route('index')->with('success', 'Registrasi berhasil, menunggu verifikasi admin.');
     }
-
 
     public function logout(Request $request)
     {
@@ -110,8 +109,6 @@ class UserController extends Controller
         return view('dashboard.index', compact('dataBuku', 'query'));
     }
 
-
-
     public function setting()
     {
         $User = Auth::user();
@@ -125,11 +122,10 @@ class UserController extends Controller
         return view('sesi.edit', compact('User'));
     }
 
-
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
-            'nama' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'email' => 'required|unique:users,email,' . $id . '|string|max:255',
             'alamat' => 'required|string|max:255',
             'password' => 'nullable|min:6|confirmed',
@@ -138,7 +134,7 @@ class UserController extends Controller
 
         $user = User::findOrFail($id);
 
-        $user->nama = $validated['nama'];
+        $user->name = $validated['name'];
         $user->email = $validated['email'];
         $user->alamat = $validated['alamat'];
 

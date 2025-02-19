@@ -40,6 +40,10 @@ Route::middleware(['ban'])->group(function () {
 
 Route::get('/ban', [BanController::class, 'index'])->name('ban.index');
 
+Route::middleware(['auth', 'ban', 'role:admin,superadmin'])->group(function () {
+    Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
+});
+
 Route::middleware(['auth', 'ban', 'superadmin'])->group(function () {
     Route::get('admin/users', [AdminController::class, 'user'])->name('admin.users');
     Route::get('admin/users/{user}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
@@ -55,9 +59,6 @@ Route::middleware(['auth', 'ban', 'superadmin'])->group(function () {
 Route::middleware(['auth', 'admin','ban'])->group(function () {
     Route::get('/admin/verifikasi', [AdminController::class, 'daftarVerifikasi'])->name('admin.verifikasi.list');
     Route::get('/admin/verifikasi/{id}/{status}', [AdminController::class, 'verifikasiUser'])->name('admin.verifikasi');
-
-    Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
-
 
     Route::get('/buku', [BukuController::class, 'index'])->name('buku.index');
     Route::get('/buku/create', [BukuController::class, 'create'])->name('buku.create');

@@ -27,7 +27,7 @@ class AdminController extends Controller
     {
         $search = $request->get('search', '');
         $users = User::when($search, function ($query, $search) {
-            return $query->where('nama', 'like', "%{$search}%")
+            return $query->where('name', 'like', "%{$search}%")
                 ->orWhere('email', 'like', "%{$search}%")
                 ->orWhere('nis', 'like', "%{$search}%");
         })->get();
@@ -65,7 +65,7 @@ class AdminController extends Controller
         $validated = $request->validate([
             'nis' => 'required|unique:users,nis',
             'password' => 'required|min:6|confirmed',
-            'nama' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'alamat' => 'required|string',
             'email' => 'required|email|unique:users,email',
             'role' => 'required|string',
@@ -82,7 +82,7 @@ class AdminController extends Controller
 
     public function showUser(User $user)
     {
-        return view('admin.users.show',compact('user'));
+        return view('admin.users.show', compact('user'));
     }
 
     public function editUser(User $user)
@@ -95,7 +95,7 @@ class AdminController extends Controller
         $validated = $request->validate([
             'nis' => 'required|unique:users,nis,' . $user->id,
             'password' => 'nullable|min:6|confirmed',
-            'nama' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'alamat' => 'required|string',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'role' => 'required|string',
@@ -137,13 +137,14 @@ class AdminController extends Controller
     public function searchUsers(Request $request)
     {
         $query = $request->get('query');
-        $users = User::where('nama', 'like', '%' . $query . '%')
+        $users = User::where('name', 'like', '%' . $query . '%')
             ->orWhere('email', 'like', '%' . $query . '%')
             ->orWhere('nis', 'like', '%' . $query . '%')
             ->get();
 
         return response()->json($users);
     }
+
     public function daftarVerifikasi()
     {
         $users = User::where('status_verifikasi', 'pending')->get();

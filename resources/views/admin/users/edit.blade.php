@@ -30,8 +30,8 @@
         </div>
 
         <div class="mb-3">
-            <label for="nama" class="form-label">Nama</label>
-            <input type="text" name="nama" id="nama" class="form-control @error('nama') is-invalid @enderror" value="{{ old('nama', $user->nama) }}" required>
+            <label for="name" class="form-label">Nama</label>
+            <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('nama', $user->name) }}" required>
             @error('nama')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror

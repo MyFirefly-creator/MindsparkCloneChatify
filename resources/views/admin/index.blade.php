@@ -33,7 +33,7 @@
     <div class="sidebar d-flex flex-column">
         <div class="text-center mt-4">
             <img src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : asset('profil/avatar.png') }}" class="rounded-circle" width="60" height="60" alt="Admin profile picture">
-            <h2 class="fs-5 mt-2">{{ $user->nama }}</h2>
+            <h2 class="fs-5 mt-2">{{ $user->name }}</h2>
         </div>
         <nav class="mt-4">
             <a href="{{ route('admin.index') }}" class="{{ request()->routeIs('admin.index') ? 'bg-primary text-white' : '' }}">
@@ -51,9 +51,11 @@
             <a href="{{ route('peminjaman.index') }}" class="{{ request()->routeIs('peminjaman.index') ? 'bg-primary text-white' : '' }}">
                 <i class="fas fa-handshake me-2"></i> Manage Peminjaman
             </a>
-            <a href="{{ route('admin.users') }}" class="{{ request()->routeIs('admin.users') ? 'bg-primary text-white' : '' }}">
-                <i class="fas fa-users me-2"></i> Manage Users
-            </a>
+            @if(Auth::check() && in_array(Auth::user()->role, ['superadmin']))
+                <a href="{{ route('admin.users') }}" class="{{ request()->routeIs('admin.users') ? 'bg-primary text-white' : '' }}">
+                    <i class="fas fa-users me-2"></i> Manage Users
+                </a>
+            @endif
             <a href="{{ route('admin.verifikasi.list') }}" class="{{ request()->routeIs('admin.verifikasi') ? 'active' : '' }}">
                 <i class="fas fa-check-circle me-2"></i> Verifikasi Pengguna
             </a>
@@ -77,7 +79,7 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="bg-info text-white p-4 rounded shadow">
+                    <div class="bg-secondary text-white p-4 rounded shadow">
                         <h2 class="fs-5">Buku Dipinjam Bulan Ini</h2>
                         <p class="fs-2 mt-2">{{ $jumlahBukuDipinjam }}</p>
                     </div>

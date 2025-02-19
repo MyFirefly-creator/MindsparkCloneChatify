@@ -33,7 +33,7 @@
     <div class="sidebar d-flex flex-column">
         <div class="text-center mt-4">
             <img src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : asset('profil/avatar.png') }}" class="rounded-circle" width="60" height="60" alt="Admin profile picture">
-            <h2 class="fs-5 mt-2">{{ $user->nama }}</h2>
+            <h2 class="fs-5 mt-2">{{ $user->name }}</h2>
         </div>
         <nav class="mt-4">
             <a href="{{ route('admin.index') }}" class="{{ request()->routeIs('admin.index') ? 'bg-primary text-white' : '' }}">
@@ -51,9 +51,11 @@
             <a href="{{ route('peminjaman.index') }}" class="{{ request()->routeIs('peminjaman.index') ? 'bg-primary text-white' : '' }}">
                 <i class="fas fa-handshake me-2"></i> Manage Peminjaman
             </a>
-            <a href="{{ route('admin.users') }}" class="{{ request()->routeIs('admin.users') ? 'bg-primary text-white' : '' }}">
-                <i class="fas fa-users me-2"></i> Manage Users
-            </a>
+            @if(Auth::check() && in_array(Auth::user()->role, ['superadmin']))
+                <a href="{{ route('admin.users') }}" class="{{ request()->routeIs('admin.users') ? 'bg-primary text-white' : '' }}">
+                    <i class="fas fa-users me-2"></i> Manage Users
+                </a>
+            @endif
             <a href="{{ route('admin.verifikasi.list') }}" class="{{ request()->routeIs('admin.verifikasi') ? 'active' : '' }}">
                 <i class="fas fa-check-circle me-2"></i> Verifikasi Pengguna
             </a>
@@ -64,7 +66,7 @@
             <h1 class="fs-4">Manage Peminjaman</h1>
             <div class="d-flex align-items-center">
                 <img src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : asset('profil/avatar.png') }}" class="rounded-circle me-3" width="40" height="40" alt="User profile picture">
-                <span class="me-3">{{ $user->username }}</span>
+                <span class="me-3">{{ $user->name }}</span>
                 <i class="fas fa-bell fs-5"></i>
             </div>
         </header>

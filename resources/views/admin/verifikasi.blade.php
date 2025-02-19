@@ -158,9 +158,11 @@
                 <a href="{{ route('peminjaman.index') }}" class="{{ request()->routeIs('peminjaman.index') ? 'active' : '' }}">
                     <i class="fas fa-handshake me-2"></i> Manage Peminjaman
                 </a>
-                <a href="{{ route('admin.users') }}" class="{{ request()->routeIs('admin.users') ? 'active' : '' }}">
-                    <i class="fas fa-users me-2"></i> Manage Users
-                </a>
+                @if(Auth::check() && in_array(Auth::user()->role, ['superadmin']))
+                    <a href="{{ route('admin.users') }}" class="{{ request()->routeIs('admin.users') ? 'bg-primary text-white' : '' }}">
+                        <i class="fas fa-users me-2"></i> Manage Users
+                    </a>
+                @endif
                 <a href="{{ route('admin.verifikasi.list') }}" class="{{ request()->routeIs('admin.verifikasi') ? 'active' : '' }}">
                     <i class="fas fa-check-circle me-2"></i> Verifikasi Pengguna
                 </a>
@@ -203,7 +205,7 @@
                                 @foreach($users as $user)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $user->nama }}</td>
+                                        <td>{{ $user->name }}</td>
                                         <td>{{ $user->email }}</td>
                                         <td><img src="{{ asset('storage/' . $user->foto_ktp) }}" width="100"></td>
                                         <td><img src="{{ asset('storage/' . $user->foto_diri) }}" width="100"></td>

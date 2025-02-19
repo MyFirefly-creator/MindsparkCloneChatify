@@ -4,7 +4,7 @@
         class="rounded-circle"
         style="width: 60px; height: 60px; object-fit: cover; margin: auto;">
         <p class="fw-bold mt-2">
-            {{ Auth::check() ? Auth::user()->nama : 'Guest' }}
+            {{ Auth::check() ? Auth::user()->name : 'Guest' }}
         </p>
     </div>
 

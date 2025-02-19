@@ -144,7 +144,7 @@
         <div class="sidebar">
             <div class="text-center mt-4">
                 <img src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : asset('profil/avatar.png') }}" class="rounded-circle" alt="Admin profile picture">
-                <h2 class="fs-5 mt-2">{{ Auth::user()->nama }}</h2>
+                <h2 class="fs-5 mt-2">{{ Auth::user()->name }}</h2>
             </div>
             <nav class="mt-4">
                 <a href="{{ route('admin.index') }}" class="{{ request()->routeIs('admin.index') ? 'active' : '' }}">
@@ -162,9 +162,11 @@
                 <a href="{{ route('peminjaman.index') }}" class="{{ request()->routeIs('peminjaman.index') ? 'active' : '' }}">
                     <i class="fas fa-handshake me-2"></i> Manage Peminjaman
                 </a>
-                <a href="{{ route('admin.users') }}" class="{{ request()->routeIs('admin.users') ? 'active' : '' }}">
-                    <i class="fas fa-users me-2"></i> Manage Users
-                </a>
+                @if(Auth::check() && in_array(Auth::user()->role, ['superadmin']))
+                    <a href="{{ route('admin.users') }}" class="{{ request()->routeIs('admin.users') ? 'bg-primary text-white' : '' }}">
+                        <i class="fas fa-users me-2"></i> Manage Users
+                    </a>
+                @endif
                 <a href="{{ route('admin.verifikasi.list') }}" class="{{ request()->routeIs('admin.verifikasi') ? 'active' : '' }}">
                     <i class="fas fa-check-circle me-2"></i> Verifikasi Pengguna
                 </a>
@@ -260,7 +262,7 @@
                                     @if (!in_array($user->role, ['admin', 'superadmin']))
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $user->nama }}</td>
+                                            <td>{{ $user->name }}</td>
                                             <td>{{ $user->email }}</td>
                                             <td>
                                                 @foreach($user->warnings as $warning)

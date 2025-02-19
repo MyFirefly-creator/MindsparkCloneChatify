@@ -37,7 +37,7 @@
             @forelse($peminjaman as $p)
                 <tr>
                     <td>{{ $p->id }}</td>
-                    <td>{{ isset($p->user) ? $p->user->nama : 'Data Tidak Ada' }}</td>
+                    <td>{{ isset($p->user) ? $p->user->name : 'Data Tidak Ada' }}</td>
                     <td>{{ isset($p->buku) ? $p->buku->NamaBuku : 'Data Tidak Ada' }}</td>
                     <td>{{ \Carbon\Carbon::parse($p->TanggalPeminjaman)->format('d-m-Y') }}</td>
                     <td>{{ \Carbon\Carbon::parse($p->TanggalPengembalian)->format('d-m-Y') }}</td>

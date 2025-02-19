@@ -79,7 +79,7 @@
                         <div class="comment-box d-flex align-items-start p-2 mt-3">
                             <div class="rounded-circle bg-secondary me-3" style="width: 40px; height: 40px;"></div>
                             <div>
-                                <strong>{{ $ulasan->user->nama }}</strong>
+                                <strong>{{ $ulasan->user->name }}</strong>
                                 <span class="text-warning">
                                     @php
                                         $rating = $ulasan->Rating ?? 0;

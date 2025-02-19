@@ -37,7 +37,7 @@
                     <i class="fas fa-pen text-dark"></i>
                 </div>
             </div>
-            <h4 class="mt-2">{{ Auth::user()->nama }}</h4>
+            <h4 class="mt-2">{{ Auth::user()->name }}</h4>
             <p class="text-muted">{{ Auth::user()->email }}</p>
         </div>
         <div class="list-group mb-4">
