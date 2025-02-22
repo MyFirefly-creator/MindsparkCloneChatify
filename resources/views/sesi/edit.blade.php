@@ -10,8 +10,8 @@
 
             <div class="form-group">
                 <label for="nama">Nama</label>
-                <input type="text" class="form-control" id="nama" name="nama" value="{{ old('nama', $User->nama) }}">
-                @error('nama')
+                <input type="text" class="form-control" id="name" name="name" value="{{ old('name', $User->name) }}">
+                @error('name')
                     <div class="text-danger">{{ $message }}</div>
                 @enderror
             </div>
