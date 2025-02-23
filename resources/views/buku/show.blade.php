@@ -23,20 +23,9 @@
                     </div>
                     <div class="ms-3 w-75">
                         <div class="d-flex align-items-center">
-                            @php
-                                $fullStars = floor($averageRating);
-                                $halfStar = $averageRating - $fullStars >= 0.5 ? 1 : 0;
-                                $emptyStars = 5 - $fullStars - $halfStar;
-                            @endphp
-
-                            <span class="text-warning">
-                                @for ($i = 0; $i < $fullStars; $i++) ★ @endfor
-                                @if ($halfStar) ½ @endif
-                                @for ($i = 0; $i < $emptyStars; $i++) ☆ @endfor
-                            </span>
-                            <span class="ms-2">{{ number_format($averageRating, 1) }}</span>
+                            <span class="text-warning">{{ $averageStarDisplay }}</span>
+                            <span class="ms-2">{{ number_format($averageRating, 1) }}/5</span>
                         </div>
-
                         <h2 class="fw-bold">{{ $buku->NamaBuku }}</h2>
                         <p>{{ $buku->deskripsi }}</p>
 
@@ -44,7 +33,7 @@
                             @if($sedangDipinjam)
                                 <button class="btn btn-secondary" disabled>Sudah Dipinjam</button>
                             @else
-                                <a href="{{ route('peminjaman.create') }}" class="btn btn-primary">Pinjam</a>
+                                <a href="{{ route('peminjaman.create', ['bukuID' => $buku->id]) }}" class="btn btn-primary">Pinjam</a>
                             @endif
 
                             <button class="btn btn-primary" id="reviewButton">Tulis Ulasan</button>
@@ -77,21 +66,16 @@
                     <h3 class="fw-bold">Komentar</h3>
                     @foreach ($ulasans as $ulasan)
                         <div class="comment-box d-flex align-items-start p-2 mt-3">
-                            <div class="rounded-circle bg-secondary me-3" style="width: 40px; height: 40px;"></div>
+                            <div class="me-3">
+                                <img src="{{ $ulasan->user && $ulasan->user->avatar ? asset($ulasan->user->avatar) : asset('profil/avatar.png') }}"
+                                     alt="{{ $ulasan->user->name }}"
+                                     class="rounded-circle"
+                                     style="width: 40px; height: 40px; object-fit: cover;">
+                            </div>
                             <div>
                                 <strong>{{ $ulasan->user->name }}</strong>
-                                <span class="text-warning">
-                                    @php
-                                        $rating = $ulasan->Rating ?? 0;
-                                        $fullStars = floor($rating);
-                                        $halfStar = $rating - $fullStars >= 0.5 ? 1 : 0;
-                                        $emptyStars = 5 - $fullStars - $halfStar;
-                                    @endphp
-                                    @for ($i = 0; $i < $fullStars; $i++) ★ @endfor
-                                    @if ($halfStar) ½ @endif
-                                    @for ($i = 0; $i < $emptyStars; $i++) ☆ @endfor
-                                </span>
-                                <span>{{ $rating }}</span>
+                                <span class="text-warning">{{ $ulasan->starDisplay }}</span>
+                                <span>{{ $ulasan->Rating }}</span>
                                 <p class="m-0">{{ $ulasan->Ulasan }}</p>
                             </div>
                         </div>
@@ -103,26 +87,20 @@
                 <h3 class="fw-bold">Buku Lainnya</h3>
                 <div class="mt-3">
                     @foreach ($relatedBooks as $relatedBook)
-                        <div class="d-flex mb-2">
+                        <a href="{{ route('buku.show', ['bukuID' => $relatedBook->id]) }}" class="d-flex mb-2 text-decoration-none text-dark">
                             <div class="book-image w-25">
-                                <img src="{{ asset('storage/' . $relatedBook->image) }}" alt="{{ $relatedBook->NamaBuku }}" class="img-fluid">
+                                <img src="{{ asset('storage/' . $relatedBook->image) }}" alt="{{ $relatedBook->NamaBuku }}" class="img-fluid rounded">
                             </div>
                             <div class="ms-2">
-                                <h5>{{ $relatedBook->NamaBuku }}</h5>
+                                <h5 class="mb-1">{{ $relatedBook->NamaBuku }}</h5>
                                 <span class="text-warning">
-                                    @php
-                                        $rating = $relatedBook->rating ?? 0;
-                                        $fullStars = floor($rating);
-                                        $halfStar = $rating - $fullStars >= 0.5 ? 1 : 0;
-                                        $emptyStars = 5 - $fullStars - $halfStar;
-                                    @endphp
-                                    @for ($i = 0; $i < $fullStars; $i++) ★ @endfor
-                                    @if ($halfStar) ½ @endif
-                                    @for ($i = 0; $i < $emptyStars; $i++) ☆ @endfor
+                                    {{ str_repeat('★', floor($relatedBook->ulasans_avg_rating ?? 0)) }}
+                                    {{ ($relatedBook->ulasans_avg_rating ?? 0) - floor($relatedBook->ulasans_avg_rating ?? 0) >= 0.5 ? '½' : '' }}
+                                    {{ str_repeat('☆', 5 - ceil($relatedBook->ulasans_avg_rating ?? 0)) }}
                                 </span>
-                                <span>{{ $rating }}</span>
+                                <span>{{ number_format($relatedBook->ulasans_avg_rating ?? 0, 1) }}</span>
                             </div>
-                        </div>
+                        </a>
                     @endforeach
                 </div>
             </div>
@@ -189,5 +167,4 @@
         });
     });
 </script>
-
 @endsection

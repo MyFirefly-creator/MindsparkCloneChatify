@@ -71,15 +71,37 @@ class BukuController extends Controller
     {
         $buku = Buku::findOrFail($id);
         $ulasans = Ulasan::where('BukuID', $id)->with('user')->get();
-        $kategoribuku = $buku->kategoris;
-        $averageRating = $buku->ulasans()->avg('rating');
 
+        $averageRating = $buku->ulasans()->avg('rating') ?? 0;
+        $fullStars = str_repeat('★', floor($averageRating));
+        $halfStar = ($averageRating - floor($averageRating)) >= 0.5 ? '½' : '';
+        $emptyStars = str_repeat('☆', 5 - floor($averageRating) - ($halfStar ? 1 : 0));
+        $averageStarDisplay = $fullStars . $halfStar . $emptyStars;
+
+        $ulasans->transform(function ($ulasan) {
+            $rating = $ulasan->Rating ?? 0;
+            $full = str_repeat('★', floor($rating));
+            $half = ($rating - floor($rating)) >= 0.5 ? '½' : '';
+            $empty = str_repeat('☆', 5 - floor($rating) - ($half ? 1 : 0));
+            $ulasan->starDisplay = $full . $half . $empty;
+            return $ulasan;
+        });
+
+        $kategoribuku = $buku->kategoris;
         $peminjamanTerakhir = $buku->peminjamans()->latest()->first();
         $sedangDipinjam = $peminjamanTerakhir && $peminjamanTerakhir->status === 'dipinjam';
+        $relatedBooks = Buku::withAvg('ulasans', 'Rating')->inRandomOrder()->limit(5)->get();
 
-        $relatedBooks = Buku::inRandomOrder()->limit(5)->get();
-
-        return view('buku.show', compact('buku', 'sedangDipinjam', 'peminjamanTerakhir','relatedBooks','ulasans','kategoribuku','averageRating'));
+        return view('buku.show', compact(
+            'buku',
+            'sedangDipinjam',
+            'peminjamanTerakhir',
+            'relatedBooks',
+            'ulasans',
+            'kategoribuku',
+            'averageRating',
+            'averageStarDisplay'
+        ));
     }
 
     public function edit($id)
