@@ -56,11 +56,12 @@
                     <i class="fas fa-users me-2"></i> Manage Users
                 </a>
             @endif
-            <a href="{{ route('admin.verifikasi.list') }}" class="{{ request()->routeIs('admin.verifikasi') ? 'active' : '' }}">
+            <a href="{{ route('admin.verifikasi.list') }}" class="{{ request()->routeIs('admin.verifikasi') ? 'bg-primary text-white' : '' }}">
                 <i class="fas fa-check-circle me-2"></i> Verifikasi Pengguna
             </a>
         </nav>
     </div>
+
     <div class="main-content">
         <header class="d-flex justify-content-between align-items-center bg-white p-3 shadow">
             <h1 class="fs-4">Manage Buku</h1>
@@ -70,6 +71,7 @@
                 <i class="fas fa-bell fs-5"></i>
             </div>
         </header>
+
         <main class="mt-4">
             <div class="d-flex justify-content-between mb-3">
                 <h2 class="fs-4">Daftar Kategori Buku</h2>
@@ -111,10 +113,11 @@
             </table>
 
             <div class="d-flex justify-content-center mt-3">
-                {{ $kategoriBuku->links() }}
+                {{ $kategoriBuku->links('pagination::bootstrap-5') }}
             </div>
         </main>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

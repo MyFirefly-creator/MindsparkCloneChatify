@@ -56,7 +56,7 @@ Route::middleware(['auth', 'ban', 'superadmin'])->group(function () {
     Route::post('/warnings/store', [AdminController::class, 'storeWarning'])->name('warnings.store');
 });
 
-Route::middleware(['auth', 'admin','ban'])->group(function () {
+Route::middleware(['auth','role:admin,superadmin','ban'])->group(function () {
     Route::get('/admin/verifikasi', [AdminController::class, 'daftarVerifikasi'])->name('admin.verifikasi.list');
     Route::get('/admin/verifikasi/{id}/{status}', [AdminController::class, 'verifikasiUser'])->name('admin.verifikasi');
 

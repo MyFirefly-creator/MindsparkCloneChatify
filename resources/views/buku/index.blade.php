@@ -84,6 +84,7 @@
                         <th>Penulis</th>
                         <th>Penerbit</th>
                         <th>Tahun Terbit</th>
+                        <th>Stok Buku</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -96,6 +97,7 @@
                         <td>{{ $buku->penulis }}</td>
                         <td>{{ $buku->penerbit }}</td>
                         <td>{{ \Carbon\Carbon::parse($buku->tanggal_terbit)->year }}</td>
+                        <td>{{ $buku->stokBuku }}</td>
                         <td>
                             <a href="{{ route('buku.edit', $buku->id) }}" class="btn btn-warning btn-sm">Edit</a>
                             <form action="{{ route('buku.destroy', $buku->id) }}" method="POST" class="d-inline">
@@ -110,7 +112,7 @@
                 </tbody>
             </table>
             <div class="d-flex justify-content-center mt-3">
-                {{ $dataBuku->links() }}
+                {{ $dataBuku->links('pagination::bootstrap-5') }}
             </div>
         </main>
     </div>

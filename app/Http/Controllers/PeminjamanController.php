@@ -14,12 +14,22 @@ class PeminjamanController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $user = Auth::User();
+        $user = Auth::user();
+        $search = $request->get('search', '');
 
-        $peminjaman = Peminjaman::where('StatusPeminjaman', 'Dipinjam')->paginate(10);
-        return view('peminjaman.index', compact('peminjaman','user'));
+        $peminjaman = Peminjaman::with(['user', 'buku'])
+            ->when($search, function ($query, $search) {
+                return $query->whereHas('user', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('nis', 'like', "%{$search}%");
+                });
+            })
+            ->paginate(10);
+
+        return view('peminjaman.index', compact('peminjaman', 'search','user'));
     }
 
     /**
@@ -64,7 +74,7 @@ public function store(Request $request)
         'BukuID' => $request->BukuID,
         'TanggalPeminjaman' => now()->format('Y-m-d'),
         'TanggalPengembalian' => now()->addDays(7)->format('Y-m-d'),
-        'StatusPeminjaman' => 'dipinjam',
+        'StatusPeminjaman' => 'pending',
     ]);
 
     return redirect()->route('peminjaman.index')->with('success', 'Peminjaman berhasil!');
@@ -92,31 +102,47 @@ public function store(Request $request)
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Peminjaman $peminjaman)
+    public function update(Request $request, $id)
     {
         $request->validate([
+            'UserID' => 'required|exists:users,id',
             'BukuID' => 'required|exists:bukus,id',
-            'TanggalPeminjaman' => 'nullable|date',
-            'TanggalPengembalian' => 'nullable|date|after:TanggalPeminjaman',
-            'StatusPeminjaman' => 'required|in:dipinjam,dikembalikan',
+            'TanggalPeminjaman' => 'required|date',
+            'TanggalPengembalian' => 'required|date|after_or_equal:TanggalPeminjaman',
+            'StatusPeminjaman' => 'required|in:dipinjam,dikembalikan,pending',
         ]);
 
-        $data = [
-            'BukuID' => $request->BukuID,
-            'StatusPeminjaman' => $request->StatusPeminjaman,
-        ];
+        $peminjaman = Peminjaman::find($id);
+        $buku = Buku::find($peminjaman->BukuID);
 
-        if ($request->has('TanggalPeminjaman') && $request->TanggalPeminjaman) {
-            $data['TanggalPeminjaman'] = $request->TanggalPeminjaman;
+        $statusLama = $peminjaman->StatusPeminjaman;
+        $statusBaru = $request->StatusPeminjaman;
+
+        // Debugging
+
+        if ($statusBaru === 'dipinjam' && $statusLama !== 'dipinjam') {
+            if ($buku->stokBuku > 0) {
+                $buku->stokBuku -= 1;
+                $buku->save();
+            } else {
+                return redirect()->back()->with('error', 'Stok buku habis!');
+            }
         }
 
-        if ($request->has('TanggalPengembalian') && $request->TanggalPengembalian) {
-            $data['TanggalPengembalian'] = $request->TanggalPengembalian;
+        if ($statusBaru === 'dikembalikan') {
+            $buku->stokBuku += 1;
+            $buku->save();
+
+            $peminjaman->StatusPeminjaman = $statusBaru;
+            $peminjaman->save();
+
+            return redirect()->route('peminjaman.index')->with('success', 'Buku berhasil dikembalikan!');
         }
 
-        $peminjaman->update($data);
+        $peminjaman->StatusPeminjaman = $statusBaru;
+        $peminjaman->save();
 
-        return redirect()->route('peminjaman.index')->with('success', 'Peminjaman berhasil diperbarui!');
+        return redirect()->route('peminjaman.index')->with('success', 'Status peminjaman berhasil diperbarui!');
     }
 
     /**

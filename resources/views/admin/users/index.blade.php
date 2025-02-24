@@ -178,7 +178,7 @@
                 <h1 class="fs-4 page-header">Manajemen Pengguna</h1>
                 <div class="d-flex align-items-center">
                     <img src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : asset('profil/avatar.png') }}" class="rounded-circle me-3" width="40" height="40" alt="User profile picture">
-                    <span class="me-3">{{ Auth::user()->username }}</span>
+                    <span class="me-3">{{ Auth::user()->name }}</span>
                     <i class="fas fa-bell fs-5"></i>
                 </div>
             </header>
@@ -218,7 +218,7 @@
                                 <label for="user_id_ban" class="form-label">Pilih Pengguna</label>
                                 <select name="user_id" id="user_id_ban" class="form-control">
                                     @foreach($users as $user)
-                                        <option value="{{ $user->id }}">{{ $user->nama }} ({{ $user->email }})</option>
+                                        <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
                                     @endforeach
                                 </select>
                             </div>

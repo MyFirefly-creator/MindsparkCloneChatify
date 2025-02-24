@@ -6,6 +6,7 @@
     <title>Tambah Kategori Buku</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
 </head>
 <body class="bg-light">
     <div class="main-content">
@@ -18,6 +19,7 @@
                 @csrf
                 <div class="card">
                     <div class="card-body">
+                        <!-- Dropdown Buku -->
                         <div class="mb-3">
                             <label for="BukuID" class="form-label">Buku</label>
                             <select name="BukuID" id="BukuID" class="form-select @error('BukuID') is-invalid @enderror">
@@ -31,6 +33,7 @@
                             @enderror
                         </div>
 
+                        <!-- Dropdown Kategori -->
                         <div class="mb-3">
                             <label for="KategoriID" class="form-label">Kategori</label>
                             <select name="KategoriID" id="KategoriID" class="form-select @error('KategoriID') is-invalid @enderror">
@@ -54,6 +57,26 @@
         </main>
     </div>
 
+    <!-- jQuery -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <!-- Bootstrap Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Select2 -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Inisialisasi Select2 untuk Buku dan Kategori
+            $('#BukuID').select2({
+                placeholder: "Pilih Buku",
+                allowClear: true
+            });
+
+            $('#KategoriID').select2({
+                placeholder: "Pilih Kategori",
+                allowClear: true
+            });
+        });
+    </script>
 </body>
 </html>

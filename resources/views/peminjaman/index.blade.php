@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Manage Peminjaman</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <style>
@@ -61,6 +61,7 @@
             </a>
         </nav>
     </div>
+
     <div class="main-content">
         <header class="d-flex justify-content-between align-items-center bg-white p-3 shadow">
             <h1 class="fs-4">Manage Peminjaman</h1>
@@ -70,11 +71,17 @@
                 <i class="fas fa-bell fs-5"></i>
             </div>
         </header>
+
         <main class="mt-4">
             <div class="d-flex justify-content-between mb-3">
                 <h2 class="fs-4">Daftar Peminjaman</h2>
-                <a href="{{ route('peminjaman.create') }}" class="btn btn-primary">Tambah Peminjaman</a>
+                <form action="{{ route('peminjaman.index') }}" method="GET" class="d-flex mb-3">
+                    <input type="text" name="search" class="form-control" placeholder="Cari User..." value="{{ $search }}">
+                    <button type="submit" class="btn btn-primary ms-2">Cari</button>
+                </form>
             </div>
+
+            <!-- TABEL PEMINJAMAN -->
             <table class="table table-bordered bg-white shadow">
                 <thead>
                     <tr>
@@ -87,34 +94,37 @@
                         <th>Aksi</th>
                     </tr>
                 </thead>
-                    <tbody>
-                        @foreach ($peminjaman as $pinjam)
-                            @if($pinjam->StatusPeminjaman == 'dipinjam')
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $pinjam->user->nama }}</td>
-                                <td>{{ $pinjam->buku->NamaBuku }}</td>
-                                <td>{{ \Carbon\Carbon::parse($pinjam->TanggalPeminjaman)->format('d-m-Y') }}</td>
-                                <td>{{ \Carbon\Carbon::parse($pinjam->TanggalPengembalian)->format('d-m-Y') }}</td>
-                                <td>{{ $pinjam->StatusPeminjaman }}</td>
-                                <td>
-                                    <a href="{{ route('peminjaman.edit', $pinjam->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                    <form action="{{ route('peminjaman.destroy', $pinjam->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus peminjaman ini?');">Hapus</button>
-                                    </form>
-                                </td>
-                            </tr>
-                            @endif
-                        @endforeach
-                    </tbody>
+                <tbody>
+                    @forelse ($peminjaman as $pinjam)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $pinjam->user->name }}</td>
+                            <td>{{ $pinjam->buku->NamaBuku }}</td>
+                            <td>{{ \Carbon\Carbon::parse($pinjam->TanggalPeminjaman)->format('d-m-Y') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($pinjam->TanggalPengembalian)->format('d-m-Y') }}</td>
+                            <td>{{ $pinjam->StatusPeminjaman }}</td>
+                            <td>
+                                <a href="{{ route('peminjaman.edit', $pinjam->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                <form action="{{ route('peminjaman.destroy', $pinjam->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus peminjaman ini?');">Hapus</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" class="text-center">Tidak ada data peminjaman.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
             </table>
+
             <div class="d-flex justify-content-center mt-3">
-                {{ $peminjaman->links() }}
+                {{ $peminjaman->appends(['search' => $search])->links('pagination::bootstrap-5') }}
             </div>
         </main>
-    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -27,21 +27,35 @@
             </div>
         </div>
 
-
         <h3 class="mt-4">Daftar Buku</h3>
-        <div class="row mt-3">
+        <div class="row mt-3" id="masonry-grid" data-masonry='{"percentPosition": true }'>
             @foreach($dataBuku as $buku)
-                <div class="col-md-3">
-                    <div class="card p-3">
-                        <img src="{{ asset('storage/' . $buku->image) }}" class="card-img-top rounded" alt="{{ $buku->NamaBuku }}">
-                        <div class="card-body text-center">
-                            <h5>{{ $buku->NamaBuku }}</h5>
+                <div class="col-md-3 mb-4">
+                    <div class="card p-3" style="height: 400px;">
+                        <img src="{{ asset('storage/' . $buku->image) }}"
+                            class="card-img-top rounded"
+                            alt="{{ $buku->NamaBuku }}"
+                            style="width: 100%; height: 200px; object-fit: cover;">
+                        <div class="card-body text-center d-flex flex-column justify-content-between">
+                            <h5 class="mb-2">{{ $buku->NamaBuku }}</h5>
                             <p>{{ Str::limit($buku->deskripsi, 50) }}</p>
-                            <a href="{{ route('buku.show', $buku->id) }}" class="btn btn-primary btn-sm">Detail</a>
+                            <a href="{{ route('buku.show', $buku->id) }}" class="btn btn-primary btn-sm mt-auto">Detail</a>
                         </div>
                     </div>
                 </div>
             @endforeach
         </div>
     </div>
+
+    {{-- Masonry JS --}}
+    <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            new Masonry('#masonry-grid', {
+                itemSelector: '.col-md-3',
+                columnWidth: '.col-md-3',
+                percentPosition: true
+            });
+        });
+    </script>
 @endsection

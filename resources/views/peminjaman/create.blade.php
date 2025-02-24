@@ -32,11 +32,11 @@
                 <label for="UserID">User</label>
                 <select name="UserID" id="UserID" class="form-control" {{ $loggedInUser->role != 'superadmin' ? 'disabled' : '' }}>
                     @if($loggedInUser->role != 'superadmin')
-                        <option value="{{ $loggedInUser->id }}" selected>{{ $loggedInUser->nama }}</option>
+                        <option value="{{ $loggedInUser->id }}" selected>{{ $loggedInUser->name }}</option>
                         <input type="hidden" name="UserID" value="{{ $loggedInUser->id }}">
                     @else
                         @foreach ($users as $user)
-                            <option value="{{ $user->id }}" {{ old('UserID') == $user->id ? 'selected' : '' }}>{{ $user->nama }}</option>
+                            <option value="{{ $user->id }}" {{ old('UserID') == $user->id ? 'selected' : '' }}>{{ $user->name }}</option>
                         @endforeach
                     @endif
                 </select>
@@ -74,13 +74,22 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 <script>
     $(document).ready(function() {
+        // Inisialisasi Select2 untuk Buku
         $('#BukuID').select2({
             placeholder: "Pilih Buku",
             allowClear: true
         });
 
+        // Inisialisasi Select2 untuk User
+        $('#UserID').select2({
+            placeholder: "Pilih User",
+            allowClear: true
+        });
+
+        // Ambil semua data buku melalui AJAX
         getAllBooks();
 
+        // Validasi sebelum submit form
         $('#peminjaman-form').on('submit', function(e) {
             console.log('UserID:', $('#UserID').val());
             console.log('BukuID:', $('#BukuID').val());
@@ -92,6 +101,7 @@
         });
     });
 
+    // Fungsi untuk mengambil data buku via AJAX
     function getAllBooks() {
         $.ajax({
             url: '{{ route('peminjaman.search') }}',

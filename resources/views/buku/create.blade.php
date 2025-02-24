@@ -47,9 +47,15 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="tanggal_terbit" class="form-label">Tanggal Terbit</label>
+                        <label for="stokBuku" class="form-label">Tanggal Terbit</label>
                         <input type="date" name="tanggal_terbit" id="tanggal_terbit" class="form-control" value="{{ old('tanggal_terbit') }}" required>
                         @error('tanggal_terbit')<div class="text-danger">{{ $message }}</div>@enderror
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="stokBuku" class="form-label">Stok Buku</label>
+                        <input type="number" name="stokBuku" id="stokBuku" class="form-control" min="0" value="{{ old('stokBuku', $buku->stokBuku ?? '') }}" required>
+                        @error('stokBuku')<div class="text-danger">{{ $message }}</div>@enderror
                     </div>
 
                     <div class="mb-3">

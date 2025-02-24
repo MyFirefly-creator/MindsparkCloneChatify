@@ -32,6 +32,9 @@
                         <div class="d-flex gap-2">
                             @if($sedangDipinjam)
                                 <button class="btn btn-secondary" disabled>Sudah Dipinjam</button>
+                            @elseif($buku->stokBuku == 0)
+                                <button class="btn btn-danger" disabled>Stok Habis</button>
+                                <p class="fst-italic text-danger mt-2">*Buku sudah habis/dipinjam</p>
                             @else
                                 <a href="{{ route('peminjaman.create', ['bukuID' => $buku->id]) }}" class="btn btn-primary">Pinjam</a>
                             @endif

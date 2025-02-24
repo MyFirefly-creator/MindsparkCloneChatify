@@ -101,7 +101,7 @@
                 </tbody>
             </table>
             <div class="d-flex justify-content-center mt-3">
-                {{ $dataKategori->links() }}
+                {{ $dataKategori->links('pagination::bootstrap-5') }}
             </div>
         </main>
     </div>

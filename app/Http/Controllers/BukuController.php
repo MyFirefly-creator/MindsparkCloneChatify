@@ -15,10 +15,9 @@ class BukuController extends Controller
 {
     public function index()
     {
-        $user = Auth::User();
-
+        $user = Auth::user();
         $dataBuku = Buku::orderBy('id', 'asc')->paginate(10);
-        return view('buku.index', compact('dataBuku','user'));
+        return view('buku.index', compact('dataBuku', 'user'));
     }
 
     public function create()
@@ -36,21 +35,17 @@ class BukuController extends Controller
             return redirect()->route('buku.index')->with('error', 'Anda tidak memiliki akses untuk menambah buku.');
         }
 
-
         $request->validate([
             'NamaBuku' => 'required|string|max:255',
             'deskripsi' => 'required|string',
             'penerbit' => 'required|max:255|string',
             'penulis' => 'required|max:255|string',
             'tanggal_terbit' => 'required|date',
+            'stokBuku' => 'required|integer|min:0',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:204800'
         ]);
 
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('buku', 'public');
-        } else {
-            return back()->with('error', 'Foto tidak ditemukan');
-        }
+        $path = $request->file('image')->store('buku', 'public');
 
         $tanggal_terbit = Carbon::createFromFormat('Y-m-d', $request->tanggal_terbit, 'Asia/Jakarta');
 
@@ -60,12 +55,12 @@ class BukuController extends Controller
         $buku->penerbit = $request->penerbit;
         $buku->penulis = $request->penulis;
         $buku->tanggal_terbit = $tanggal_terbit;
+        $buku->stokBuku = $request->stokBuku;
         $buku->image = $path;
         $buku->save();
 
         return redirect()->route('buku.index')->with('success', 'Buku berhasil ditambahkan.');
     }
-
 
     public function show($id)
     {
@@ -120,6 +115,7 @@ class BukuController extends Controller
             return redirect()->route('buku.index')->with('error', 'Anda tidak memiliki akses untuk mengedit buku ini.');
         }
 
+
         $buku = Buku::findOrFail($id);
 
         $request->validate([
@@ -128,10 +124,11 @@ class BukuController extends Controller
             'penerbit' => 'required|max:255|string',
             'penulis' => 'required|max:255|string',
             'tanggal_terbit' => 'required|date',
+            'stokBuku' => 'required|integer|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
 
-        $data = $request->only(['NamaBuku', 'deskripsi', 'penerbit', 'penulis']);
+        $data = $request->only(['NamaBuku', 'deskripsi', 'penerbit', 'penulis', 'stokBuku']);
         $data['tanggal_terbit'] = Carbon::parse($request->tanggal_terbit)->timezone('Asia/Jakarta');
 
         if ($request->hasFile('image')) {
@@ -142,7 +139,6 @@ class BukuController extends Controller
 
         return redirect()->route('buku.index')->with('success', 'Buku berhasil diperbarui.');
     }
-
 
     public function destroy($id)
     {

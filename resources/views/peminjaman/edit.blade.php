@@ -32,11 +32,14 @@
         <form action="{{ route('peminjaman.update', $peminjaman->id) }}" method="POST">
             @csrf
             @method('PUT')
-
             <div class="form-group mb-3">
                 <label for="UserID">User</label>
-                <input type="text" class="form-control" id="UserID" value="{{ $loggedInUser->nama }}" disabled>
-                <input type="hidden" name="UserID" value="{{ $loggedInUser->id }}">
+                <input type="text" class="form-control" id="UserID"
+                    value="{{ old('UserID', $users->find($peminjaman->UserID)?->name) }}"
+                    @if(!in_array($loggedInUser->role, ['admin', 'superadmin'])) disabled @endif>
+
+                <input type="hidden" name="UserID" value="{{ old('UserID', $peminjaman->UserID) }}">
+
                 @error('UserID')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -57,7 +60,7 @@
 
             <div class="form-group mb-3">
                 <label for="TanggalPeminjaman">Tanggal Peminjaman</label>
-                <input type="date" class="form-control @error('TanggalPeminjaman') is-invalid @enderror" id="TanggalPeminjaman" name="TanggalPeminjaman" value="{{ old('TanggalPeminjaman', $peminjaman->TanggalPeminjaman) }}">
+                <input type="date" class="form-control @error('TanggalPeminjaman') is-invalid @enderror" id="TanggalPeminjaman" name="TanggalPeminjaman" value="{{ \Carbon\Carbon::parse($peminjaman->TanggalPeminjaman)->format('Y-m-d') }}">
                 @error('TanggalPeminjaman')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -65,19 +68,21 @@
 
             <div class="form-group mb-3">
                 <label for="TanggalPengembalian">Tanggal Pengembalian</label>
-                <input type="date" class="form-control @error('TanggalPengembalian') is-invalid @enderror" id="TanggalPengembalian" name="TanggalPengembalian" value="{{ old('TanggalPengembalian', $peminjaman->TanggalPengembalian) }}">
+                <input type="date" class="form-control @error('TanggalPengembalian') is-invalid @enderror" id="TanggalPengembalian" name="TanggalPengembalian" value="{{ \Carbon\Carbon::parse($peminjaman->TanggalPengembalian)->format('Y-m-d') }}">
                 @error('TanggalPengembalian')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
 
             <div class="form-group mb-3">
-                <label for="Status">Status</label>
-                <select class="form-control @error('Status') is-invalid @enderror" id="StatusPeminjaman" name="StatusPeminjaman" required>
+                <label for="StatusPeminjaman">Status</label>
+                <select class="form-control @error('StatusPeminjaman') is-invalid @enderror" id="StatusPeminjaman" name="StatusPeminjaman" required>
                     <option value="dipinjam" {{ old('StatusPeminjaman', $peminjaman->StatusPeminjaman) == 'dipinjam' ? 'selected' : '' }}>dipinjam</option>
                     <option value="dikembalikan" {{ old('StatusPeminjaman', $peminjaman->StatusPeminjaman) == 'dikembalikan' ? 'selected' : '' }}>dikembalikan</option>
+                    <option value="pending" {{ old('StatusPeminjaman', $peminjaman->StatusPeminjaman) == 'pending' ? 'selected' : '' }}>pending</option>
+
                 </select>
-                @error('Status')
+                @error('StatusPeminjaman')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
