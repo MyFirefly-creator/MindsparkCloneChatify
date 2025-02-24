@@ -30,7 +30,7 @@ class PeminjamanController extends Controller
     $loggedInUser = Auth::user();
 
     if ($loggedInUser->role == 'admin') {
-        return redirect()->route('home')->with('error', 'Access denied for admin users.');
+        return redirect()->route('admin.index')->with('error', 'Access denied for admin users.');
     }
 
     $bukus = Buku::all();
@@ -81,7 +81,7 @@ public function store(Request $request)
         $loggedInUser = Auth::user();
 
         if ($loggedInUser->role == 'admin') {
-            return redirect()->route('home')->with('error', 'Access denied for admin users.');
+            return redirect()->route('admin.index')->with('error', 'Access denied for admin users.');
         }
 
         $bukus = Buku::all();

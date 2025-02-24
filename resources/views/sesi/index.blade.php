@@ -51,16 +51,16 @@
     <header class="header bg-white shadow-sm">
         <div class="container d-flex justify-content-between align-items-center py-3">
             <div class="d-flex align-items-center">
+                <!-- Tambahkan logo di sini -->
+                <img src="{{ asset('bahan/LogoMindspark.jpg') }}" alt="Mindspark Logo" style="height: 40px; width: auto; margin-right: 10px;">
                 <h1 class="h4 fw-bold mb-0">Mindspark</h1>
             </div>
             <button class="btn btn-outline-secondary d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <i class="fas fa-bars"></i>
             </button>
             <nav class="collapse navbar-collapse d-md-flex justify-content-end" id="navbarNav">
-                <a href="#" class="nav-link d-none d-md-inline">Beranda</a>
-                <a href="#" class="nav-link d-none d-md-inline">Dashboard</a>
-                <a href="#" class="nav-link d-none d-md-inline">Tentang</a>
-                <a href="#" class="nav-link d-none d-md-inline">Kontak</a>
+                <a href="{{ route('index') }}" class="nav-link d-none d-md-inline">Beranda</a>
+                <a href="{{ route('dashboard.index') }}" class="nav-link d-none d-md-inline">Dashboard</a>
                 <a href="{{ route('loginForm') }}" class="btn btn-green ms-3">Login</a>
             </nav>
         </div>
@@ -73,7 +73,7 @@
                 <p class="lead mb-4">Yuk Mulai Belajar dan Membaca</p>
                 <div class="d-flex flex-column flex-md-row gap-3">
                     <a href="{{ route('loginForm') }}" class="btn btn-green">Mulai Baca!</a>
-                    <a href="#" class="btn btn-gray">Jelajahi</a>
+                    <a href="{{ route('dashboard.index') }}" class="btn btn-gray">Jelajahi</a>
                 </div>
             </div>
             <div class="col-12 col-md-6 text-center">
